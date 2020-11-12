@@ -63,12 +63,11 @@ def check_plagiat(text_from_file):
     hash_from_new_file = take_shingle(text_from_file)
     if (len(hash_from_new_file)+(SHINGLE_LEN-1)) > MIN_LENGTH_FILE:
         for i in FILE_DICT:
-            name = i
             text = FILE_DICT.get(i)
             hash_old_file = take_shingle(text)
             matched = check_similarity(hash_from_new_file, hash_old_file)
             if matched > THRESHOLD_VALUE:
-                result_dict = {'filename': name, 'matched': matched, 'text': text}
+                result_dict = {'filename': i, 'matched': matched, 'text': text}
                 plagiat_dict['originals'].append(result_dict)
         if len(plagiat_dict['originals']) > 0:
             return plagiat_dict
