@@ -7,14 +7,17 @@ def canonize(text):
     canonize_text = []
     excess_symbols = ['.', ',', ':', ';', '!', '?', '-', '_',
                       '(', ')', '[', ']', '}', '{', '`', '\'',
-                      '\"', '&', '\n', '\r', '—']
+                      '\"', '&', '—']
+    replace_symbols = ['\n', '\r']
     excess_words = (u'а', u'и', u'но', u'не', u'что', u'как', u'так',
                     u'на', u'от', u'это', u'в', u'над', u'до', u'за',
                     u'с', u'ли', u'во', u'со', u'для', u'о', u'же',
                     u'ну', u'вы')
     for symbol in text:
-        if symbol not in excess_symbols and type(symbol) is str:
+        if type(symbol) is str and symbol not in excess_symbols:
             rough_text += symbol.lower()
+        elif type(symbol) is str and symbol in replace_symbols:
+            rough_text += ' '
     for word in rough_text.split():
         if word not in excess_words:
             canonize_text.append(word)
@@ -23,16 +26,22 @@ def canonize(text):
 
 def take_hash(list_worlds):
     has_list = []
-    for word in list_worlds:
-        has_list.append(md5(word.encode('utf-8')).hexdigest())
+    for i in range(len(list_worlds) - (SHINGLE_LEN - 1)):
+        str_hash = ''
+        start = i
+        stop = i + 10
+        while start < stop:
+            str_hash += f'{list_worlds[start]} '
+            start += 1
+        has_list.append(md5(str_hash.encode('utf-8')).hexdigest())
     return has_list
 
 
-def generation_shingle(hash_list):
-    shingle_list = []
-    for i in range(len(hash_list) - (SHINGLE_LEN - 1)):
-        shingle_list.append(hash_list[i:i + SHINGLE_LEN])
-    return shingle_list
+# def generation_shingle(hash_list):
+#     shingle_list = []
+#     for i in range(len(hash_list) - (SHINGLE_LEN - 1)):
+#         shingle_list.append(hash_list[i:i + SHINGLE_LEN])
+#     return shingle_list
 
 
 def check_similarity(shingle_list1, shingle_list2):
@@ -45,8 +54,8 @@ def check_similarity(shingle_list1, shingle_list2):
 
 def take_shingle(text):
     step1 = canonize(text)
-    step2 = take_hash(step1)
-    return generation_shingle(step2)
+    # step2 = take_hash(step1)
+    return take_hash(step1)
 
 
 def check_plagiat(text_from_file):
