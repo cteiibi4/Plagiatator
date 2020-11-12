@@ -1,5 +1,5 @@
 from hashlib import md5
-from .common import SHINGLE_LEN, MIN_LENGTH_FILE, THRESHOLD_VALUE, FILE_DICT
+from .common import SHINGLE_LEN, MIN_LENGTH_FILE, THRESHOLD_VALUE, FILE_DICT, STEP_SHINGLE
 
 
 def canonize(text):
@@ -26,11 +26,10 @@ def canonize(text):
 
 def take_hash(list_worlds):
     has_list = []
-    for i in range(len(list_worlds) - (SHINGLE_LEN - 1)):
+    for i in range(0, (len(list_worlds) - (SHINGLE_LEN - 1)), STEP_SHINGLE):
         str_hash = ''
         start = i
-        stop = i + 10
-        while start < stop:
+        while start < i + SHINGLE_LEN:
             str_hash += f'{list_worlds[start]} '
             start += 1
         has_list.append(md5(str_hash.encode('utf-8')).hexdigest())
@@ -61,7 +60,7 @@ def take_shingle(text):
 def check_plagiat(text_from_file):
     plagiat_dict = {'originals': []}
     hash_from_new_file = take_shingle(text_from_file)
-    if (len(hash_from_new_file)+(SHINGLE_LEN-1)) > MIN_LENGTH_FILE:
+    if (len(hash_from_new_file)+(SHINGLE_LEN-1)) > (MIN_LENGTH_FILE/STEP_SHINGLE):
         for i in FILE_DICT:
             text = FILE_DICT.get(i)
             hash_old_file = take_shingle(text)
