@@ -27,20 +27,9 @@ def canonize(text):
 def take_hash(list_worlds):
     has_list = []
     for i in range(0, (len(list_worlds) - (SHINGLE_LEN - 1)), STEP_SHINGLE):
-        str_hash = ''
-        start = i
-        while start < i + SHINGLE_LEN:
-            str_hash += f'{list_worlds[start]} '
-            start += 1
+        str_hash = ''.join(list_worlds[i:i+SHINGLE_LEN])
         has_list.append(md5(str_hash.encode('utf-8')).hexdigest())
     return has_list
-
-
-# def generation_shingle(hash_list):
-#     shingle_list = []
-#     for i in range(len(hash_list) - (SHINGLE_LEN - 1)):
-#         shingle_list.append(hash_list[i:i + SHINGLE_LEN])
-#     return shingle_list
 
 
 def check_similarity(shingle_list1, shingle_list2):
